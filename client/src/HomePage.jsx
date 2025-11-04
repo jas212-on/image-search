@@ -13,77 +13,8 @@ const ImageSearchApp = () => {
   const [searchHistory, setSearchHistory] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [topSearches, setTopSearches] = useState([]);
 
-  const topSearches = [
-    "Nature",
-    "Technology",
-    "Architecture",
-    "Food",
-    "Travel",
-  ];
-
-  // const sampleImages = [
-  //   {
-  //     id: 1,
-  //     url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
-  //     title: "Mountain Landscape",
-  //   },
-  //   {
-  //     id: 2,
-  //     url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop",
-  //     title: "Technology",
-  //   },
-  //   {
-  //     id: 3,
-  //     url: "https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=400&h=300&fit=crop",
-  //     title: "City Architecture",
-  //   },
-  //   {
-  //     id: 4,
-  //     url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop",
-  //     title: "Delicious Food",
-  //   },
-  //   {
-  //     id: 5,
-  //     url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop",
-  //     title: "Travel Destination",
-  //   },
-  //   {
-  //     id: 6,
-  //     url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=300&fit=crop",
-  //     title: "Nature Scene",
-  //   },
-  //   {
-  //     id: 7,
-  //     url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
-  //     title: "Coding Setup",
-  //   },
-  //   {
-  //     id: 8,
-  //     url: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=400&h=300&fit=crop",
-  //     title: "Building Design",
-  //   },
-  //   {
-  //     id: 9,
-  //     url: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=400&h=300&fit=crop",
-  //     title: "Gourmet Dish",
-  //   },
-  //   {
-  //     id: 10,
-  //     url: "https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=400&h=300&fit=crop",
-  //     title: "Adventure",
-  //   },
-  //   {
-  //     id: 11,
-  //     url: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400&h=300&fit=crop",
-  //     title: "Forest Path",
-  //   },
-  //   {
-  //     id: 12,
-  //     url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=300&fit=crop",
-  //     title: "Team Meeting",
-  //   },
-  // ];
 
   const loginWithGoogle = () => {
     window.location.href = "http://localhost:5000/auth/google";
@@ -123,26 +54,38 @@ const ImageSearchApp = () => {
       }
     };
 
+    const fetchTopSearches = async () => {
+    try {
+      const res = await axiosInstance.get("/api/unsplash/top-searches");
+      setTopSearches(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+    fetchTopSearches();
     fetchUser();
   }, []);
 
-  // const handleSearch = (query) => {
-  //   if (query.trim()) {
-  //     setCurrentSearch(query);
-  //     setSelectedImages(new Set());
+  useEffect(() => {
+    const fetchSearchHistory = async () => {
+      try {
+        const res = await axiosInstance.get("/api/unsplash/history");
+        setSearchHistory(res.data);
+      } catch (err) {
+        console.error(err.response?.data || err.message);
+      }
+    };
 
-  //     if (isLoggedIn && !searchHistory.includes(query.trim())) {
-  //       setSearchHistory((prev) => [query.trim(), ...prev].slice(0, 10));
-  //     }
-  //   }
-  // };
+    fetchSearchHistory();
+  }, [sampleImages]);
 
-  const searchImages = async () => {
-    if (!searchQuery) return;
-    setCurrentSearch(searchQuery);
+  const searchImages = async (query) => {
+    if (!query) return;
+    setCurrentSearch(query);
     setSelectedImages(new Set());
     try {
-      const res = await axiosInstance.get(`/api/unsplash/search?q=${searchQuery}`, {
+      const res = await axiosInstance.get(`/api/unsplash/search?q=${query}`, {
         withCredentials: true
       });
       setSampleImages(res.data);
@@ -165,12 +108,12 @@ const ImageSearchApp = () => {
 
   const handleTopSearchClick = (query) => {
     setSearchQuery(query);
-    handleSearch(query);
+    searchImages(query);
   };
 
   const handleHistoryClick = (query) => {
     setSearchQuery(query);
-    handleSearch(query);
+    searchImages(query);
     setIsSidebarOpen(false);
   };
 
@@ -316,15 +259,24 @@ const ImageSearchApp = () => {
               </p>
             ) : (
               <div className="space-y-2">
-                {searchHistory.map((term, idx) => (
+                {searchHistory.map((history) => (
                   <button
-                    key={idx}
-                    onClick={() => handleHistoryClick(term)}
-                    className="w-full text-left px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition text-gray-700 text-sm"
+                    key={history._id}
+                    onClick={() => handleHistoryClick(history.term)}
+                    className="w-full text-left px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition text-gray-700 text-sm flex justify-between items-center"
                   >
-                    <Search size={14} className="inline mr-2" />
-                    {term}
+                    <span>{history.term}</span>
+                    <span className="text-gray-500 text-xs">
+                      {new Date(history.timestamp).toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                      })}
+                    </span>
                   </button>
+
                 ))}
               </div>
             )}
@@ -364,40 +316,42 @@ const ImageSearchApp = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) =>
-                  e.key === "Enter" && handleSearch(searchQuery)
-                }
-                placeholder="Search for images..."
-                className="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onKeyPress={(e) => e.key === 'Enter' && isLoggedIn && searchImages(searchQuery)}
+                placeholder={isLoggedIn ? "Search for images..." : "Please sign in to search"}
+                disabled={!isLoggedIn}
+                className="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
               />
               <button
-                onClick={searchImages}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition"
+                onClick={() => searchImages(searchQuery)}
+                disabled={!isLoggedIn}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 <Search size={20} />
               </button>
             </div>
+            {!isLoggedIn && (
+              <p className="text-sm text-gray-500 mt-2">Sign in to start searching for images</p>
+            )}
           </div>
 
           {/* Top Searches */}
-          {!currentSearch && (
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Trending Searches
               </h2>
               <div className="flex flex-wrap gap-3">
-                {topSearches.map((search, idx) => (
+                {topSearches.map((search,idx) => (
                   <button
                     key={idx}
-                    onClick={() => handleTopSearchClick(search)}
+                    onClick={() => handleTopSearchClick(search._id)}
                     className="px-5 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-600 transition"
                   >
-                    {search}
+                    {search._id}
                   </button>
                 ))}
               </div>
             </div>
-          )}
+   
 
           {/* Search Results Info */}
           {currentSearch && (

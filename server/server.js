@@ -8,6 +8,7 @@ import passport from "passport";
 import authRoutes from "./routes/authRoutes.js";
 import unsplashRoutes from "./routes/unsplashRoutes.js";
 import "./config/passport.js";
+import { isLoggedIn } from "./middleware/auth.js";
 
 dotenv.config()
 
@@ -30,17 +31,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-// ===== Middleware to check authentication =====
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) return next();
-  res.status(401).json({ message: "Not authenticated" });
-}
-
-// ===== Protected route example =====
-app.get("/api/protected", isLoggedIn, (req, res) => {
-  res.json({ message: `Hello ${req.user.name}, this is protected data!` });
-});
 
 app.get("/auth/current-user", isLoggedIn, (req, res) => {
   res.json({
