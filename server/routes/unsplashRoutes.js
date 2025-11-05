@@ -13,7 +13,7 @@ router.get("/search",isLoggedIn, async (req, res) => {
 
   try {
     const response = await axios.get("https://api.unsplash.com/search/photos", {
-      params: { query, per_page: 50 },
+      params: { query, per_page: 20 },
       headers: { Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` }
     });
 

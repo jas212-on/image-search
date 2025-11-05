@@ -14,6 +14,7 @@ const ImageSearchApp = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [topSearches, setTopSearches] = useState([]);
+  const [isLoadingImages, setIsLoadingImages] = useState(false);
 
 
   const loginWithGoogle = () => {
@@ -84,6 +85,7 @@ const ImageSearchApp = () => {
     if (!query) return;
     setCurrentSearch(query);
     setSelectedImages(new Set());
+    setIsLoadingImages(true)
     try {
       const res = await axiosInstance.get(`/api/unsplash/search?q=${query}`, {
         withCredentials: true
@@ -91,6 +93,8 @@ const ImageSearchApp = () => {
       setSampleImages(res.data);
     } catch (err) {
       console.error(err);
+    } finally{
+      setIsLoadingImages(false)
     }
   };
 
@@ -107,12 +111,14 @@ const ImageSearchApp = () => {
   };
 
   const handleTopSearchClick = (query) => {
-    setSearchQuery(query);
+    const query_display = query.charAt(0).toUpperCase() + query.slice(1)
+    setSearchQuery(query_display);
     searchImages(query);
   };
 
   const handleHistoryClick = (query) => {
-    setSearchQuery(query);
+    const query_display = query.charAt(0).toUpperCase() + query.slice(1)
+    setSearchQuery(query_display);
     searchImages(query);
     setIsSidebarOpen(false);
   };
@@ -342,11 +348,11 @@ const ImageSearchApp = () => {
               <div className="flex flex-wrap gap-3">
                 {topSearches.map((search,idx) => (
                   <button
-                    key={idx}
+                    key={idx+1}
                     onClick={() => handleTopSearchClick(search._id)}
                     className="px-5 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-600 transition"
                   >
-                    {search._id}
+                    {search._id.charAt(0).toUpperCase() + search._id.slice(1)}
                   </button>
                 ))}
               </div>
@@ -354,10 +360,10 @@ const ImageSearchApp = () => {
    
 
           {/* Search Results Info */}
-          {currentSearch && (
+          {currentSearch && isLoggedIn && (
             <div className="mb-6">
               <h2 className="text-2xl font-semibold text-gray-800 mb-3">
-                Results for "{currentSearch}"
+                Showing {sampleImages.length} results for "{currentSearch}"
               </h2>
               <div className="inline-block bg-blue-50 text-blue-700 px-4 py-2 rounded-lg">
                 <span className="font-medium">
@@ -368,11 +374,21 @@ const ImageSearchApp = () => {
           )}
 
           {/* Image Grid */}
-          {currentSearch && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {sampleImages.map((image) => (
+          {currentSearch && isLoggedIn && (
+            <>
+              {isLoadingImages ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {[...Array(12)].map((_, idx) => (
+                    <div key={idx} className="animate-pulse">
+                      <div className="bg-gray-200 rounded-lg h-64 w-full"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {sampleImages.map((image,idx) => (
                 <div
-                  key={image.id}
+                  key={image.id+idx}
                   className="relative group cursor-pointer rounded-lg overflow-hidden shadow hover:shadow-lg transition border border-gray-200"
                   onClick={() => toggleImageSelection(image.id)}
                 >
@@ -422,16 +438,19 @@ const ImageSearchApp = () => {
                 </div>
               ))}
             </div>
+              )}
+            </>
+            
           )}
 
           {/* No Search State */}
-          {!currentSearch && (
+          {(!currentSearch || !isLoggedIn) && (
             <div className="text-center py-20 bg-white rounded-lg border border-gray-200">
               <div className="inline-block p-4 bg-gray-100 rounded-full mb-4">
                 <Search size={48} className="text-gray-400" />
               </div>
               <p className="text-xl text-gray-800 font-medium">
-                Start searching
+                {isLoggedIn ? "Start searching" : "Sign in to start searching"}
               </p>
               <p className="text-gray-500 mt-1">Enter a query to find images</p>
             </div>
