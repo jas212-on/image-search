@@ -170,20 +170,6 @@ The application will open at `http://localhost:5173`
 3. Get your connection string
 4. Update `MONGODB_URI` in your `.env` file:
 
-## Available Scripts
-
-### Backend (server/)
-- `npm start` - Start the server
-- `npm run dev` - Start with nodemon (auto-restart)
-- `npm test` - Run tests
-
-### Frontend (client/)
-- `npm start` - Start development server
-- `npm run build` - Create production build
-- `npm test` - Run tests
-- `npm run eject` - Eject from Create React App
-
-
 ## Technologies Used
 
 - **Frontend:** React, React Router, Axios
