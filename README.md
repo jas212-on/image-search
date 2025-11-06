@@ -117,6 +117,9 @@ MONGODB_URI=your-mongodb-uri
 GOOGLE_CLIENT_ID=your-google-client
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 
+FB_APP_ID=your-fb-app-id
+FB_APP_SECRET=your-fb-app-secret
+
 GITHUB_CLIENT_ID=your-github-client-id
 GITHUB_CLIENT_SECRET=your-github-client-secret
 

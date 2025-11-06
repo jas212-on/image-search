@@ -40,30 +40,30 @@ passport.use(
   )
 );
 
-// ===== FACEBOOK =====
-// passport.use(
-//   new FacebookStrategy(
-//     {
-//       clientID: process.env.FB_APP_ID,
-//       clientSecret: process.env.FB_APP_SECRET,
-//       callbackURL: "/auth/facebook/callback",
-//       profileFields: ["id", "displayName", "photos", "email"],
-//     },
-//     async (accessToken, refreshToken, profile, done) => {
-//       let existingUser = await User.findOne({ providerId: profile.id });
-//       if (!existingUser) {
-//         existingUser = await User.create({
-//           provider: "facebook",
-//           providerId: profile.id,
-//           name: profile.displayName,
-//           email: profile.emails?.[0]?.value || "",
-//           photo: profile.photos?.[0]?.value || "",
-//         });
-//       }
-//       return done(null, existingUser);
-//     }
-//   )
-// );
+//===== FACEBOOK =====
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FB_APP_ID,
+      clientSecret: process.env.FB_APP_SECRET,
+      callbackURL: "/auth/facebook/callback",
+      profileFields: ["id", "displayName", "photos", "email"],
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      let existingUser = await User.findOne({ providerId: profile.id });
+      if (!existingUser) {
+        existingUser = await User.create({
+          provider: "facebook",
+          providerId: profile.id,
+          name: profile.displayName,
+          email: profile.emails?.[0]?.value || "",
+          photo: profile.photos?.[0]?.value || "",
+        });
+      }
+      return done(null, existingUser);
+    }
+  )
+);
 
 // ===== GITHUB =====
 passport.use(
