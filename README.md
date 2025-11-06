@@ -166,9 +166,6 @@ The application will open at `http://localhost:5173`
 2. Create a new cluster
 3. Get your connection string
 4. Update `MONGODB_URI` in your `.env` file:
-```env
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database-name
-```
 
 ## Available Scripts
 
