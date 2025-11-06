@@ -47,7 +47,7 @@ app.use("/auth", authRoutes);
 app.use("/api/unsplash", unsplashRoutes);
 
 app.get('/', (req, res) => {
-  res.send('Hello, World! 👋');
+  res.send('Server running !');
 });
 
 httpServer.listen(PORT,()=>{

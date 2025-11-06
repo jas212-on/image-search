@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import ImageSearchApp from './HomePage.jsx'
+import ImageSearchApp from './pages/ImageSearchApp.jsx'
 
 
 function App() {
