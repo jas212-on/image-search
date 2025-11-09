@@ -29,6 +29,10 @@ const ImageSearchApp = () => {
     window.location.href = "http://localhost:5000/auth/github";
   };
 
+  const loginWithFacebook = () => {
+    window.location.href = "http://localhost:5000/auth/facebook";
+  };
+
   const handleLogout = async () => {
     try {
       setIsLoading(true);
@@ -137,6 +141,7 @@ const ImageSearchApp = () => {
         isLoading={isLoading}
         loginWithGoogle={loginWithGoogle}
         loginWithGithub={loginWithGithub}
+        loginWithFacebook={loginWithFacebook}
         handleLogout={handleLogout}
         searchHistory={searchHistory}
         handleHistoryClick={handleHistoryClick}

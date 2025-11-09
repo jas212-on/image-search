@@ -10,6 +10,7 @@ export const Sidebar = ({
   isLoading,
   loginWithGoogle,
   loginWithGithub,
+  loginWithFacebook,
   handleLogout,
   searchHistory,
   handleHistoryClick
@@ -40,6 +41,7 @@ export const Sidebar = ({
             <LoginButtons
               loginWithGoogle={loginWithGoogle}
               loginWithGithub={loginWithGithub}
+              loginWithFacebook={loginWithFacebook}
               isLoading={isLoading}
             />
           ) : (

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const LoginButtons = ({ loginWithGoogle, loginWithGithub, isLoading }) => {
+export const LoginButtons = ({ loginWithGoogle, loginWithGithub,loginWithFacebbok, isLoading }) => {
   return (
     <div>
       <h3 className="font-medium text-gray-800 mb-4 text-center">
@@ -31,7 +31,7 @@ export const LoginButtons = ({ loginWithGoogle, loginWithGithub, isLoading }) =>
         </button>
 
         <button
-          onClick={() => {}}
+          onClick={loginWithFacebbok}
           disabled={isLoading}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center justify-center gap-3 text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
